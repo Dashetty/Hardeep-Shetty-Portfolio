@@ -1,19 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import FloatingTabs from "./components/FloatingTabs";
+import Footer from "./components/Footer";
 import ProjectCard from "./components/ProjectCard";
-import Contact from "./components/Contact";
 import Experience from "./components/Experience";
-import LandingSequence from "./components/LandingSequence";
 import { projects } from "./data/projects";
 
 function App() {
   const [isDark, setIsDark] = useState(true);
   const [activeSection, setActiveSection] = useState("");
   const sectionsRef = useRef<(HTMLElement | null)[]>([]);
-  const landingSpacerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
+    document.dispatchEvent(
+      new CustomEvent("theme-changed", {
+        detail: { isDark },
+      }),
+    );
   }, [isDark]);
 
   useEffect(() => {
@@ -45,9 +48,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative dotted-bg">
-      {/* Landing Sequence - Full screen "Hello" that animates on scroll */}
-      <LandingSequence spacerRef={landingSpacerRef} />
-
       <nav className="fixed left-4 sm:left-6 top-1/2 -translate-y-1/2 z-10 hidden lg:block">
         <div className="flex flex-col gap-4">
           {["intro", "projects", "work", "thoughts", "connect"].map((section) => (
@@ -70,10 +70,6 @@ function App() {
       </nav>
 
       <main className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-16">
-        {/* Spacer for landing sequence scroll animation */}
-        <div ref={landingSpacerRef} className="h-screen" aria-hidden="true" />
-
-        {/* Intro */}
         <header
           id="intro"
           ref={(el) => {
@@ -93,11 +89,9 @@ function App() {
 
               <div className="space-y-6 max-w-xl">
                 <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  Frontend-focused engineer crafting experiences at the
-                  intersection of
-                  <span className="text-foreground"> design</span>,
-                  <span className="text-foreground"> technology</span>, and
-                  <span className="text-foreground"> user experience</span>.
+                  Aspiring developer with who strives to be creative and curious in 
+                  <span className="text-foreground"> design</span> and 
+                  <span className="text-foreground"> technology</span>
                 </p>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
@@ -181,17 +175,13 @@ function App() {
           </div>
         </section>
 
-        {/* Connect (component) */}
-        <section
-          id="connect"
-          ref={(el) => {
-            sectionsRef.current[4] = el;
-          }}
-          className="py-20 sm:py-32 opacity-0"
-        >
-          <Contact />
-        </section>
       </main>
+
+      <Footer
+        ref={(el) => {
+          sectionsRef.current[4] = el;
+        }}
+      />
 
       <FloatingTabs />
 
