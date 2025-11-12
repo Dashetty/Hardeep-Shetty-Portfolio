@@ -1,136 +1,188 @@
 import type { FC } from 'react'
-import { useEffect, useState } from 'react'
+import { ArrowUpRight, Github } from 'lucide-react'
 import type { Project } from '../data/projects'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { Github01Icon, Link01Icon } from '@hugeicons/core-free-icons'
+import { projectCardPalettes } from './projectPalettes'
 
-
-type ExtendedProject = Project & {
-  techStack?: string[]
-  images?: string[]
+type ProjectCardProps = {
+  project: Project
+  isExpanded: boolean
+  isDimmed: boolean
+  isDark: boolean
+  onHover: () => void
+  onLeave: () => void
+  className?: string
 }
 
-export const ProjectCard: FC<{ project: ExtendedProject }> = ({ project }) => {
-  const fallbackImages = [project.image, project.image, project.image]
-  const data: ExtendedProject = {
-    title: project.title,
-    description: project.description,
-    image: project.image,
-    github: project.github,
-    demo: project.demo,
-    techStack: project.techStack ?? ['React', 'Node.js', 'MongoDB', 'Stripe', 'Tailwind CSS'],
-    images: project.images && project.images.length > 0 ? project.images : fallbackImages,
-  }
+const mergeClasses = (base: string, extra?: string) => (extra ? `${base} ${extra}` : base)
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+export const ProjectCard: FC<ProjectCardProps> = ({ project, isExpanded, isDimmed, isDark, onHover, onLeave, className }) => {
+  const palette = isDark ? projectCardPalettes.dark : projectCardPalettes.light
+  const containerClass = mergeClasses('relative h-full w-full cursor-pointer overflow-hidden rounded-3xl', className)
 
-  useEffect(() => {
-    const total = data.images?.length ?? 1
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % total)
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [data.images])
-
-  const goToImage = (index: number) => setCurrentImageIndex(index)
-  const goToPrevious = () => setCurrentImageIndex((prev) => (prev === 0 ? (data.images?.length ?? 1) - 1 : prev - 1))
-  const goToNext = () => setCurrentImageIndex((prev) => (prev + 1) % (data.images?.length ?? 1))
+  const scale = isExpanded ? 1.03 : isDimmed ? 0.97 : 1
+  const zIndex = isExpanded ? 20 : isDimmed ? 5 : 10
+  const minHeight = isExpanded ? 480 : 300
+  const cardShadow = isExpanded ? palette.expandedShadow : isDimmed ? palette.dimmedShadow : palette.baseShadow
+  const accentWidth = isExpanded ? '100%' : isDimmed ? '30%' : '46%'
+  const accentOpacity = isExpanded ? 1 : isDimmed ? 0.55 : 0.92
 
   return (
-    <div className="w-full rounded-3xl border border-border bg-card backdrop-blur-xl p-8 md:p-12 flex flex-col lg:flex-row gap-8 lg:gap-12 transition-transform duration-500 hover:-translate-y-2 hover:border-foreground">
-      <div className="flex-[2] flex flex-col justify-between min-w-0 space-y-10">
-        <div>
-          <h2 className="font-raleway text-3xl md:text-4xl lg:text-5xl font-bold text-textPrimary mb-4">{data.title}</h2>
-          <p className="font-raleway text-muted-foreground text-lg leading-relaxed">{data.description}</p>
+    <article
+      className={containerClass}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      style={{
+        transform: `scale(${scale})`,
+        transition: 'transform 340ms cubic-bezier(0.21, 0.82, 0.25, 1)',
+        minHeight,
+        zIndex,
+      }}
+    >
+      <div
+        className="relative flex h-full flex-col justify-between rounded-3xl border p-6 md:p-8"
+        style={{
+          backgroundColor: palette.canvas,
+          borderWidth: 2,
+          borderColor: isExpanded ? palette.ink : palette.canvasBorder,
+          boxShadow: cardShadow,
+          transition: 'border-color 260ms ease-out, box-shadow 320ms ease-out',
+        }}
+      >
+        <div
+          className="absolute left-0 top-0 h-1 rounded-tr-3xl"
+          style={{
+            width: accentWidth,
+            background: `linear-gradient(90deg, ${palette.accentTerracotta}, ${palette.accentGold})`,
+            opacity: accentOpacity,
+            transition: 'width 420ms ease-out, opacity 260ms ease-out',
+          }}
+        />
 
-          {data.techStack && data.techStack.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-8">
-              {data.techStack.map((tech) => (
-                <span key={tech} className="font-raleway px-3 py-1 rounded-lg text-sm bg-muted text-foreground">
-                  {tech}
+        <div
+          style={{
+            opacity: isExpanded ? 0 : 1,
+            pointerEvents: isExpanded ? 'none' : 'auto',
+            transition: 'opacity 260ms ease-out',
+            filter: isDimmed && !isExpanded ? 'blur(0px) brightness(0.95)' : 'none',
+          }}
+        >
+          <div className="mb-6 space-y-4">
+            <div className="flex items-center gap-3 text-xs uppercase tracking-[0.18em]" style={{ color: palette.accentTerracotta }}>
+              {project.featured && (
+                <span
+                  className="rounded-full px-3 py-1 text-[0.65rem] font-semibold"
+                  style={{
+                    backgroundColor: `${palette.accentSage}1a`,
+                    color: palette.ink,
+                    border: `1px solid ${palette.accentSage}55`,
+                  }}
+                >
+                  Featured
+                </span>
+              )}
+              <span>{project.tags[0]}</span>
+            </div>
+
+            <h3 className="text-2xl font-semibold leading-tight md:text-3xl" style={{ color: palette.ink }}>
+              {project.title}
+            </h3>
+            <p
+              className="text-base leading-relaxed"
+              style={{
+                color: palette.mutedText,
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {project.description}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {project.tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-medium"
+                style={{
+                  backgroundColor: palette.tagBg,
+                  color: palette.ink,
+                  border: `1px solid ${palette.tagBorder}`,
+                }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className="absolute inset-0 flex flex-col justify-between p-6 md:p-8"
+          style={{
+            opacity: isExpanded ? 1 : 0,
+            pointerEvents: isExpanded ? 'auto' : 'none',
+            transition: 'opacity 260ms ease-out',
+            background: palette.overlayGradient,
+            borderRadius: 'inherit',
+          }}
+        >
+          <div className="space-y-4">
+            <h3 className="text-2xl font-semibold leading-tight md:text-3xl" style={{ color: palette.ink }}>
+              {project.title}
+            </h3>
+            <p className="text-sm leading-relaxed" style={{ color: palette.ink }}>
+              {project.fullDescription}
+            </p>
+          </div>
+
+          <div className="space-y-4 pt-4" style={{ borderTop: `1px solid ${palette.canvasBorder}` }}>
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-medium"
+                  style={{
+                    backgroundColor: palette.tagBgExpanded,
+                    color: palette.ink,
+                    border: `1px solid ${palette.tagBorderExpanded}`,
+                  }}
+                >
+                  {tag}
                 </span>
               ))}
             </div>
-          )}
-        </div>
 
-        {(data.github || data.demo) && (
-          <div className="flex flex-wrap gap-4">
-            {data.github && (
-              <a
-                href={data.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-raleway px-6 py-3 rounded-full bg-primary text-primary-foreground inline-flex items-center gap-2 transition-colors hover:opacity-90"
-              >
-                <HugeiconsIcon icon={Github01Icon} size={18} /> View Code
-              </a>
-            )}
-            {data.demo && (
-              <a
-                href={data.demo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-raleway px-6 py-3 rounded-full border border-foreground text-foreground inline-flex items-center gap-2 transition-colors hover:border-foreground"
-              >
-                <HugeiconsIcon icon={Link01Icon} size={18} /> Live Demo
-              </a>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Right Side - Image Slider (60%) */}
-      <div className="flex-[3] flex flex-col min-w-0 space-y-6">
-        <div className="rounded-2xl border border-border bg-[color-mix(in_oklab,var(--background) 85%,#ffffff 5%)]">
-          <div className="relative w-full h-[520px] md:h-[560px] lg:h-[520px] rounded-2xl overflow-hidden bg-muted">
-            {data.images?.map((image, index) => (
-              <img
-                key={`${image}-${index}`}
-                src={image}
-                alt={`${data.title} screenshot ${index + 1}`}
-                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
-                  index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-                }`}
-              />
-            ))}
-
-            <button
-              onClick={goToPrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-[color-mix(in_oklab,var(--foreground) 12%,transparent)] text-foreground flex items-center justify-center shadow-lg transition-all hover:bg-[color-mix(in_oklab,var(--foreground) 18%,transparent)]"
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-all duration-300 hover:gap-3"
+              style={{
+                backgroundColor: palette.accentTerracotta,
+                color: palette.ctaText,
+                boxShadow: palette.ctaShadow,
+              }}
             >
-              <span className="text-xl">‹</span>
-            </button>
-            <button
-              onClick={goToNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-[color-mix(in_oklab,var(--foreground) 12%,transparent)] text-foreground flex items-center justify-center shadow-lg transition-all hover:bg-[color-mix(in_oklab,var(--foreground) 18%,transparent)]"
-            >
-              <span className="text-xl">›</span>
-            </button>
-          </div>
-
-          <div className="flex justify-center gap-2 mt-5 pb-6">
-            {data.images?.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToImage(index)}
-                className={`h-2 rounded-full transition-all ${
-                  index === currentImageIndex
-                    ? 'bg-foreground w-8'
-                    : 'bg-[color-mix(in_oklab,var(--foreground) 30%,transparent)] w-2 hover:bg-[color-mix(in_oklab,var(--foreground) 55%,transparent)]'
-                }`}
-              />
-            ))}
+              <Github className="h-4 w-4" />
+              <span>View Code</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
           </div>
         </div>
 
-        <div className="text-left text-sm text-muted-foreground">
-          <span className="font-raleway italic">
-            {currentImageIndex + 1} / {data.images?.length ?? 1}
-          </span>
-        </div>
+        <div
+          className="absolute -bottom-2 -right-2 rounded-sm"
+          style={{
+            width: isExpanded ? '24px' : '12px',
+            height: isExpanded ? '24px' : '12px',
+            backgroundColor: palette.accentGold,
+            opacity: isExpanded ? 0.95 : 0.45,
+            transition: 'all 260ms ease-out',
+          }}
+        />
       </div>
-    </div>
+    </article>
   )
 }
 

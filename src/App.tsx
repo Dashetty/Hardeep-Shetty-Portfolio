@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import FloatingTabs from "./components/FloatingTabs";
 import Footer from "./components/Footer";
-import ProjectCard from "./components/ProjectCard";
+import ProjectsGrid from "./components/ProjectsGrid";
 import Experience from "./components/Experience";
-import { projects } from "./data/projects";
 
 function App() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const sectionsRef = useRef<(HTMLElement | null)[]>([]);
 
@@ -95,7 +94,7 @@ function App() {
                 </p>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                     For work
                   </div>
                   <div>Manipal, India</div>
@@ -145,11 +144,7 @@ function App() {
               </div>
             </div>
 
-            <div className="space-y-8 sm:space-y-12">
-              {projects.map((p) => (
-                <ProjectCard key={p.title} project={p} />
-              ))}
-            </div>
+            <ProjectsGrid />
           </div>
         </section>
 

@@ -46,8 +46,8 @@ export const Footer = forwardRef<HTMLElement>(function FooterComponent(_, ref) {
 
   const colors = useMemo(
     () => ({
-      back: isDarkMode ? "hsl(230, 40%, 8%)" : "hsl(210, 60%, 94%)",
-      front: isDarkMode ? "hsl(328, 92%, 68%)" : "hsl(210, 88%, 55%)",
+      back: isDarkMode ? "hsl(230, 40%, 8%)" : "#d9d9cd",
+      front: isDarkMode ? "hsl(328, 92%, 68%)" : "#6da6f7",
     }),
     [isDarkMode],
   );
@@ -108,7 +108,7 @@ export const Footer = forwardRef<HTMLElement>(function FooterComponent(_, ref) {
               </footer>
             </div>
 
-            <div className="relative w-full flex-1 md:w-1/2">
+            <div className="relative w-full flex-1 p-4 md:w-1/2">
               {isMounted && (
                 <Dithering
                   style={{ height: "100%", width: "100%", display: "block" }}
@@ -119,13 +119,20 @@ export const Footer = forwardRef<HTMLElement>(function FooterComponent(_, ref) {
                   pxSize={3}
                   offsetX={0}
                   offsetY={0}
-                  scale={0.95}
+                  scale={0.83}
                   rotation={-8}
                   speed={0.12}
                   fit="cover"
                 />
               )}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-background/40 via-background/10 to-transparent" />
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background: isDarkMode
+                    ? "linear-gradient(135deg, rgba(8,8,12,0.6) 0%, rgba(8,8,12,0.15) 40%, rgba(8,8,12,0) 75%)"
+                    : "linear-gradient(135deg, rgba(109,166,247,0.28) 0%, rgba(109,166,247,0.12) 40%, rgba(109,166,247,0) 75%)",
+                }}
+              />
             </div>
           </div>
         </div>
