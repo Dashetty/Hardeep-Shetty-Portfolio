@@ -4,7 +4,7 @@ import { forwardRef, useEffect, useMemo, useState } from "react";
 const footerLinks = [
   { label: "Email", value: "dashushetty2003@gmail.com", href: "mailto:dashushetty2003@gmail.com" },
   { label: "GitHub", value: "@Dashetty", href: "https://github.com/Dashetty" },
-  { label: "LinkedIn", value: "Hardeep Dilip Shetty", href: "https://www.linkedin.com" },
+  { label: "LinkedIn", value: "Hardeep Dilip Shetty", href: "https://www.linkedin.com/in/hardeep-shetty-aa5587396" },
 ];
 
 export const Footer = forwardRef<HTMLElement>(function FooterComponent(_, ref) {
