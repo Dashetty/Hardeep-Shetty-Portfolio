@@ -69,13 +69,6 @@ export const Footer = forwardRef<HTMLElement>(function FooterComponent(_, ref) {
               </header>
 
               <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-500" />
-                  <span className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                    Available for select projects
-                  </span>
-                </div>
-
                 <dl className="space-y-4">
                   {footerLinks.map((item) => {
                     const isExternal = item.href.startsWith("http");

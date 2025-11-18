@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import LogoMark from "./assets/favicon.svg";
 import FloatingTabs from "./components/FloatingTabs";
 import Footer from "./components/Footer";
 import ProjectsGrid from "./components/ProjectsGrid";
@@ -78,6 +79,13 @@ function App() {
         >
           <div className="grid lg:grid-cols-5 gap-12 sm:gap-16 w-full">
             <div className="lg:col-span-3 space-y-6 sm:space-y-8">
+              <div className="flex items-center gap-4">
+                <img
+                  src={LogoMark}
+                  alt="Hardeep Shetty logomark"
+                  className="h-14 w-14 shrink-0"
+                />
+              </div>
               <div className="space-y-2">
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-thin tracking-tight">
                   Hardeep
@@ -88,7 +96,7 @@ function App() {
 
               <div className="space-y-6 max-w-xl">
                 <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  Aspiring developer with who strives to be creative and curious in 
+                  Aspiring developer who strives to be creative and curious in 
                   <span className="text-foreground"> design</span> and 
                   <span className="text-foreground"> technology</span>
                 </p>
